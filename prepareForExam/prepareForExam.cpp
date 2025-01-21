@@ -61,27 +61,23 @@ int findSumToOdd(btree::ptrNODE& root)
 }
 
 // 3 task
-bool is_all_prts_empty1(ttree::ptrNODE t) {
-	if (!t) return true;
-	for (int i = 0; i < 26; ++i) {
-		if (t->ptrs[i]) {
-			return false;
-		}
-	}
-	return true;
-}
 
-void deleteLastChar(ttree::ptrNODE& t)
+void del_last_letter(ttree::TTREE& tree, ttree::ptrNODE& root)
 {
-	if (!t) return;
-
-	for (int i = 0; i < 26; ++i) {
-		if (t->ptrs[i]) {
-			deleteLastChar(t->ptrs[i]);
-			if (t->ptrs[i]->eow && is_all_prts_empty1(t->ptrs[i])) {
-
-				t->ptrs[i]->eow = false;
-				t->eow = true;
+	if (root)
+	{
+		for (int i = 0; i < 26; ++i)
+		{
+			if (root->ptrs[i])
+			{
+				if (root->ptrs[i]->eow)
+				{
+					delete root->ptrs[i];
+					root->ptrs[i] = nullptr;
+					root->eow = true;
+				}
+				else
+					del_last_letter(tree, root->ptrs[i]);
 			}
 		}
 	}
@@ -109,7 +105,7 @@ void deleteLeavesLevel(btree::ptrNODE& root)
 	}
 }
 
-
+// 2 task
 int sumToCurrLevel(btree::ptrNODE& root, int level)
 {
 	if (!root)
@@ -144,28 +140,25 @@ int sumToCurrLevel(btree::ptrNODE& root, int level)
 	return sum;
 }
 
-void add(ttree::ptrNODE& t, const std::string word, short i);
-
-void doubleLastChar(ttree::ptrNODE& root, std::string& word)
+//  3 task
+void doubleLastChar(ttree::TTREE& tree, ttree::ptrNODE& root)
 {
-	if (!root)
-		return;
-	if (root->eow && !word.empty())
+	if (root)
 	{
-		char lastChar = word.back();
-
-		if (!root->ptrs[lastChar - 'a'])
+		for (int i = 0; i < 26; ++i)
 		{
-			root->ptrs[lastChar - 'a'] = new ttree::NODE();
-			root->ptrs[lastChar - 'a']->eow = true;
-		}
+			if (root->ptrs[i])
+			{
+				if (root->ptrs[i]->eow)
+				{
+					root->ptrs[i]->ptrs[i] = new ttree::NODE();
+					root->ptrs[i]->eow = false;
+					root->ptrs[i]->ptrs[i]->eow = true;
 
-	}
-	for (int i = 0; i < 26; i++) {
-		if (root->ptrs[i]) {
-			word.push_back(char(i + 'a'));
-			doubleLastChar(root->ptrs[i], word);
-			word.pop_back();
+				}
+				else
+					doubleLastChar(tree, root->ptrs[i]);
+			}
 		}
 	}
 }
@@ -186,8 +179,9 @@ int main()
 // 3 task
 	//ttree.print("");
 	//ttree::ptrNODE root = ttree.get_root();
-	//deleteLastChar(root);
+	//del_last_letter(ttree, root);
 	//ttree.print("");
+
 
 	//KIM №4
 // 1 task
@@ -200,7 +194,6 @@ int main()
 //3 task
 	ttree.print("");
 	ttree::ptrNODE root = ttree.get_root();
-	std::string word = "";
-	doubleLastChar(root, word);
+	doubleLastChar(ttree, root);
 	ttree.print("");
 }
